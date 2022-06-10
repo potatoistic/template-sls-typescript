@@ -1,0 +1,42 @@
+service: headless-cms
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-south-1'}
+  bundle:
+    linting: false
+    tsConfig: 'tsconfig.json'
+  serverless-offline:
+    httpPort: 4000
+  prune:
+    automatic: true
+    number: 3
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 128
+  timeout: 10
+  logRetentionInDays: 7
+  logs:
+    httpApi: true
+  httpApi:
+    cors: true
+
+package:
+  individually: true
+
+plugins:
+  - serverless-offline
+  - serverless-bundle
+  - serverless-prune-plugin
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: '/'
+          method: GET
